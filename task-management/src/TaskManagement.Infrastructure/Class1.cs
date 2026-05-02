@@ -1,6 +1,3 @@
 ﻿namespace TaskManagement.Infrastructure;
 
-public class Class1
-{
-
-}
+public static class AssemblyMarker;
