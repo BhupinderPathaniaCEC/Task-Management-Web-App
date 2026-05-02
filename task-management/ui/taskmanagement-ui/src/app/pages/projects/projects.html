@@ -1,0 +1,172 @@
+<div class="dashboard">
+  <header class="header">
+    <h1>Projects</h1>
+    <div class="user-info">
+      <button class="btn-secondary" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a routerLink="/dashboard">Dashboard</a>
+    <a routerLink="/projects" class="active">Projects</a>
+  </nav>
+
+  <main class="main">
+    @if (loading()) {
+      <div class="loading">Loading...</div>
+    } @else {
+      <div class="projects-layout">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <h3>My Projects</h3>
+            @if (isAdmin()) {
+              <button class="btn-small" (click)="showCreateModal.set(true)">+ New</button>
+            }
+          </div>
+          
+          <div class="project-list">
+            @for (project of projects(); track project.id) {
+              <div 
+                class="project-item" 
+                [class.active]="selectedProject()?.id === project.id"
+                (click)="selectProject(project)"
+              >
+                <h4>{{ project.name }}</h4>
+                <p>{{ project.description || 'No description' }}</p>
+              </div>
+            }
+          </div>
+        </aside>
+
+        <div class="content">
+          @if (selectedProject(); as project) {
+            <div class="project-detail">
+              <div class="detail-header">
+                <div>
+                  <h2>{{ project.name }}</h2>
+                  <p>{{ project.description || 'No description' }}</p>
+                </div>
+                @if (isAdmin()) {
+                  <div class="actions">
+                    <button class="btn-primary" (click)="showTaskModal.set(true)">+ Add Task</button>
+                    <button class="btn-secondary" (click)="showMemberModal.set(true)">+ Add Member</button>
+                  </div>
+                }
+              </div>
+
+              <div class="tasks-section">
+                <h3>Tasks ({{ tasks().length }})</h3>
+                @if (tasks().length === 0) {
+                  <p class="empty">No tasks yet.</p>
+                } @else {
+                  <div class="task-table">
+                    <div class="task-header">
+                      <span>Status</span>
+                      <span>Title</span>
+                      <span>Assignee</span>
+                      <span>Due Date</span>
+                      <span>Actions</span>
+                    </div>
+                    @for (task of tasks(); track task.id) {
+                      <div class="task-row">
+                        <span class="status-badge" [class]="'status-' + task.status">
+                          {{ taskStatusLabels[task.status] }}
+                        </span>
+                        <span class="title">{{ task.title }}</span>
+                        <span>{{ task.assigneeUserId || 'Unassigned' }}</span>
+                        <span [class.overdue]="task.dueDate && task.status !== 2 && task.dueDate < (new Date().toISOString().split('T')[0])">
+                          {{ task.dueDate ? (task.dueDate | date:'shortDate') : 'No due date' }}
+                        </span>
+                        <span>
+                          @if (isAdmin()) {
+                            <select 
+                              [value]="task.status" 
+                              (change)="updateTaskStatus(task.id, +$any($event).target.value)"
+                              class="status-select"
+                            >
+                              <option value="0">Todo</option>
+                              <option value="1">In Progress</option>
+                              <option value="2">Done</option>
+                            </select>
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p>Select a project to view details</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
+
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="showCreateModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Create New Project</h3>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="newProject.name" placeholder="Project name" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newProject.description" placeholder="Project description"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showCreateModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="createProject()">Create</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showTaskModal()) {
+  <div class="modal-overlay" (click)="showTaskModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Add New Task</h3>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" [(ngModel)]="newTask.title" placeholder="Task title" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newTask.description" placeholder="Task description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Assignee User ID</label>
+        <input type="text" [(ngModel)]="newTask.assigneeUserId" placeholder="User ID" />
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" [(ngModel)]="newTask.dueDate" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showTaskModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="createTask()">Create</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showMemberModal()) {
+  <div class="modal-overlay" (click)="showMemberModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Add Member</h3>
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" [(ngModel)]="newMember.userId" placeholder="User ID to add" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showMemberModal.set(false)">Cancel</button>
+        <button class="btn-primary" (click)="addMember()">Add</button>
+      </div>
+    </div>
+  </div>
+}
