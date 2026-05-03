@@ -82,3 +82,4 @@ D:\To-Do-Web-App\task-management\src\TaskManagement.Api\obj\Debug\net10.0\refint
 D:\To-Do-Web-App\task-management\src\TaskManagement.Api\obj\Debug\net10.0\TaskManagement.Api.pdb
 D:\To-Do-Web-App\task-management\src\TaskManagement.Api\obj\Debug\net10.0\TaskManagement.Api.genruntimeconfig.cache
 D:\To-Do-Web-App\task-management\src\TaskManagement.Api\obj\Debug\net10.0\ref\TaskManagement.Api.dll
+D:\To-Do-Web-App\task-management\src\TaskManagement.Api\bin\Debug\net10.0\railway.json
