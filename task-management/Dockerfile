@@ -2,8 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY ["src/TaskManagement.sln", "./"]
+# Copy project files
 COPY ["src/TaskManagement.Api/TaskManagement.Api.csproj", "TaskManagement.Api/"]
 COPY ["src/TaskManagement.Application/TaskManagement.Application.csproj", "TaskManagement.Application/"]
 COPY ["src/TaskManagement.Domain/TaskManagement.Domain.csproj", "TaskManagement.Domain/"]
