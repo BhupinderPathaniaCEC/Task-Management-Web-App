@@ -1,0 +1,79 @@
+<div class="dashboard">
+  <header class="header">
+    <h1>Task Manager</h1>
+    <div class="user-info">
+      <span class="role-badge">{{ userRole()() }}</span>
+      <button class="btn-secondary" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a routerLink="/dashboard" class="active">Dashboard</a>
+    <a routerLink="/projects">Projects</a>
+  </nav>
+
+  <main class="main">
+    @if (loading()) {
+      <div class="loading">Loading...</div>
+    } @else {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>{{ projects().length }}</h3>
+          <p>Total Projects</p>
+        </div>
+        <div class="stat-card">
+          <h3>{{ tasks().length }}</h3>
+          <p>Total Tasks</p>
+        </div>
+        <div class="stat-card warning">
+          <h3>{{ getOverdueTasks() }}</h3>
+          <p>Overdue Tasks</p>
+        </div>
+        <div class="stat-card success">
+          <h3>{{ getCompletedTasks() }}</h3>
+          <p>Completed</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Recent Projects</h2>
+        @if (projects().length === 0) {
+          <p class="empty">No projects yet. Create your first project!</p>
+        } @else {
+          <div class="project-list">
+            @for (project of projects().slice(0, 5); track project.id) {
+              <div class="project-card" [routerLink]="['/projects', project.id]">
+                <h4>{{ project.name }}</h4>
+                <p>{{ project.description || 'No description' }}</p>
+                <span class="date">{{ project.createdAt | date:'medium' }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="section">
+        <h2>Tasks Overview</h2>
+        @if (tasks().length === 0) {
+          <p class="empty">No tasks yet.</p>
+        } @else {
+          <div class="task-list">
+            @for (task of tasks().slice(0, 10); track task.id) {
+              <div class="task-item">
+                <span class="status-badge" [class]="'status-' + task.status">
+                  {{ task.status === 0 ? 'Todo' : task.status === 1 ? 'In Progress' : 'Done' }}
+                </span>
+                <span class="title">{{ task.title }}</span>
+                @if (task.dueDate) {
+                  <span class="due" [class.overdue]="task.dueDate < (new Date().toISOString().split('T')[0]) && task.status !== 2">
+                    Due: {{ task.dueDate | date:'shortDate' }}
+                  </span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

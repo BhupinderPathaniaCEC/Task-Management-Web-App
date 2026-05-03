@@ -1,0 +1,67 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Register</h2>
+    
+    @if (error()) {
+      <div class="error">{{ error() }}</div>
+    }
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          [(ngModel)]="email" 
+          name="email" 
+          required
+          placeholder="Enter your email"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          [(ngModel)]="password" 
+          name="password" 
+          required
+          placeholder="Enter your password"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          [(ngModel)]="confirmPassword" 
+          name="confirmPassword" 
+          required
+          placeholder="Confirm your password"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" [(ngModel)]="role" name="role">
+          <option value="Member">Member</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      
+      <button type="submit" [disabled]="loading()">
+        @if (loading()) {
+          Registering...
+        } @else {
+          Register
+        }
+      </button>
+    </form>
+    
+    <p class="auth-link">
+      Already have an account? <a routerLink="/login">Login</a>
+    </p>
+  </div>
+</div>
