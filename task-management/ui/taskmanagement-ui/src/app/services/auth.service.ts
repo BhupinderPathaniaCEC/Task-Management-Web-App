@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface AuthResponse {
   accessToken: string;
@@ -22,10 +23,11 @@ interface RegisterRequest {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'https://localhost:5001/api';
+  private readonly apiUrl = environment.apiUrl;
   
   readonly isAuthenticated = signal(!!localStorage.getItem('access_token'));
   readonly userRole = signal<string | null>(localStorage.getItem('user_role'));
+  readonly userId = signal<string | null>(localStorage.getItem('user_id'));
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -63,9 +65,14 @@ export class AuthService {
       const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || 
                    payload.role || 
                    null;
+      const userId = payload.sub || payload.nameid || null;
       if (role) {
         localStorage.setItem('user_role', role);
         this.userRole.set(role);
+      }
+      if (userId) {
+        localStorage.setItem('user_id', userId);
+        this.userId.set(userId);
       }
     } catch {
       console.error('Failed to decode token');

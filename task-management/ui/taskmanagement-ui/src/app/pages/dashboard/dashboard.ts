@@ -78,4 +78,10 @@ export class DashboardComponent implements OnInit {
   getPendingTasks(): number {
     return this.tasks().filter(t => t.status !== 2).length;
   }
+
+  isOverdue(dueDate: string | null, status: number): boolean {
+    if (!dueDate || status === 2) return false;
+    const today = new Date().toISOString().split('T')[0];
+    return dueDate < today;
+  }
 }

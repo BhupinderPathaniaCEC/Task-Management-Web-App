@@ -31,11 +31,12 @@ public sealed class ProjectRepository : IProjectRepository
 
     public async Task<IReadOnlyList<Project>> GetForUserAsync(string userId, CancellationToken cancellationToken)
     {
-        return await _db.ProjectMembers
+        var projects = await _db.ProjectMembers
             .Where(pm => pm.UserId == userId)
             .Select(pm => pm.Project!)
-            .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(cancellationToken);
+        
+        return projects.OrderByDescending(p => p.CreatedAt).ToList();
     }
 
     public async Task AddMemberAsync(Guid projectId, string userId, CancellationToken cancellationToken)

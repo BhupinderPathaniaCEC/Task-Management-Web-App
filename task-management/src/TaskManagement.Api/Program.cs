@@ -7,6 +7,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        var allowedOrigins = builder.Configuration["AllowedOrigins"] ?? "http://localhost:4200,https://localhost:4200";
+        var origins = allowedOrigins.Split(',');
+        policy.WithOrigins(origins)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services
@@ -40,6 +53,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAngular");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

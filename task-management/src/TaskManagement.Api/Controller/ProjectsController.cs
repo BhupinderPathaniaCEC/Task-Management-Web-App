@@ -34,7 +34,6 @@ public sealed class ProjectsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = AppRole.Admin)]
     public async Task<ActionResult<ProjectResponse>> Create(CreateProjectRequest request, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

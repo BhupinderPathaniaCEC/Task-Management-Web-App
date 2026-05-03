@@ -32,6 +32,7 @@ public sealed class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken cancellationToken)
     {
+        Console.WriteLine($"Registering user: {request.Email}");
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
         {
             return BadRequest();
@@ -70,19 +71,24 @@ public sealed class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken cancellationToken)
     {
+        Console.WriteLine($"Login attempt for: {request.Email}");
+        
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
         {
+            Console.WriteLine("User not found");
             return Unauthorized();
         }
 
         var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
         if (!signInResult.Succeeded)
         {
+            Console.WriteLine($"Password check failed: {signInResult}");
             return Unauthorized();
         }
 
         var token = await _tokenService.CreateJwtAsync(user, cancellationToken);
+        Console.WriteLine("Login successful");
         return Ok(new AuthResponse(token));
     }
 }

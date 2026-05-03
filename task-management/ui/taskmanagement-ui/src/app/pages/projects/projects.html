@@ -19,9 +19,7 @@
         <aside class="sidebar">
           <div class="sidebar-header">
             <h3>My Projects</h3>
-            @if (isAdmin()) {
               <button class="btn-small" (click)="showCreateModal.set(true)">+ New</button>
-            }
           </div>
           
           <div class="project-list">
@@ -46,12 +44,12 @@
                   <h2>{{ project.name }}</h2>
                   <p>{{ project.description || 'No description' }}</p>
                 </div>
-                @if (isAdmin()) {
-                  <div class="actions">
-                    <button class="btn-primary" (click)="showTaskModal.set(true)">+ Add Task</button>
+                <div class="actions">
+                  <button class="btn-primary" (click)="showTaskModal.set(true)">+ Add Task</button>
+                  @if (isAdmin()) {
                     <button class="btn-secondary" (click)="showMemberModal.set(true)">+ Add Member</button>
-                  </div>
-                }
+                  }
+                </div>
               </div>
 
               <div class="tasks-section">
@@ -74,21 +72,20 @@
                         </span>
                         <span class="title">{{ task.title }}</span>
                         <span>{{ task.assigneeUserId || 'Unassigned' }}</span>
-                        <span [class.overdue]="task.dueDate && task.status !== 2 && task.dueDate < (new Date().toISOString().split('T')[0])">
+                        <span [class.overdue]="isOverdue(task.dueDate, task.status)">
                           {{ task.dueDate ? (task.dueDate | date:'shortDate') : 'No due date' }}
                         </span>
                         <span>
-                          @if (isAdmin()) {
-                            <select 
-                              [value]="task.status" 
-                              (change)="updateTaskStatus(task.id, +$any($event).target.value)"
-                              class="status-select"
-                            >
-                              <option value="0">Todo</option>
-                              <option value="1">In Progress</option>
-                              <option value="2">Done</option>
-                            </select>
-                          }
+                          <select 
+                            [value]="task.status" 
+                            (change)="updateTaskStatus(task.id, +$any($event).target.value)"
+                            class="status-select"
+                            [disabled]="!canUpdateTask(task)"
+                          >
+                            <option value="0">Todo</option>
+                            <option value="1">In Progress</option>
+                            <option value="2">Done</option>
+                          </select>
                         </span>
                       </div>
                     }
