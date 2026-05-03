@@ -2,21 +2,23 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY ["TaskManagement.sln", "./"]
-COPY ["TaskManagement.Api/TaskManagement.Api.csproj", "TaskManagement.Api/"]
-COPY ["TaskManagement.Application/TaskManagement.Application.csproj", "TaskManagement.Application/"]
-COPY ["TaskManagement.Domain/TaskManagement.Domain.csproj", "TaskManagement.Domain/"]
-COPY ["TaskManagement.Infrastructure/TaskManagement.Infrastructure.csproj", "TaskManagement.Infrastructure/"]
+# Copy solution file from parent directory
+COPY ["../TaskManagement.sln", "./"]
+COPY ["../TaskManagement.Application/TaskManagement.Application.csproj", "TaskManagement.Application/"]
+COPY ["../TaskManagement.Domain/TaskManagement.Domain.csproj", "TaskManagement.Domain/"]
+COPY ["../TaskManagement.Infrastructure/TaskManagement.Infrastructure.csproj", "TaskManagement.Infrastructure/"]
+
+# Copy current project file
+COPY ["TaskManagement.Api.csproj", "./"]
 
 # Restore dependencies
-RUN dotnet restore "TaskManagement.Api/TaskManagement.Api.csproj"
+RUN dotnet restore "TaskManagement.Api.csproj"
 
 # Copy all source code
-COPY TaskManagement.Api/. TaskManagement.Api/
-COPY TaskManagement.Application/. TaskManagement.Application/
-COPY TaskManagement.Domain/. TaskManagement.Domain/
-COPY TaskManagement.Infrastructure/. TaskManagement.Infrastructure/
+COPY . ./TaskManagement.Api/
+COPY ../TaskManagement.Application/. ./TaskManagement.Application/
+COPY ../TaskManagement.Domain/. ./TaskManagement.Domain/
+COPY ../TaskManagement.Infrastructure/. ./TaskManagement.Infrastructure/
 
 # Build the project
 WORKDIR "/src/TaskManagement.Api"

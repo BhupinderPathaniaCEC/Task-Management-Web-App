@@ -281,7 +281,7 @@ This project can be deployed to Railway for production hosting with automatic HT
    - Go to [railway.app](https://railway.app) and click "New Project"
    - Select "Deploy from GitHub repo"
    - Choose your repository
-   - Select the `src/TaskManagement.Api` directory as the root
+   - Select the **root directory** of the repository as the deployment root
 
 2. **Configure environment variables:**
    - Go to your Railway project → Variables tab
@@ -298,7 +298,7 @@ This project can be deployed to Railway for production hosting with automatic HT
    - Add a volume at path `/app/data` to persist SQLite database
 
 4. **Deploy:**
-   - Railway will automatically build and deploy using the Dockerfile
+   - Railway will automatically build and deploy using the root Dockerfile
    - Wait for the deployment to complete
    - Copy the generated Railway URL (e.g., `https://your-api.railway.app`)
 
@@ -344,9 +344,9 @@ After deploying both services:
 
 The project includes the following configuration files for Railway:
 
-**Backend:**
-- `src/TaskManagement.Api/railway.json` - Railway build configuration
-- `src/TaskManagement.Api/Dockerfile` - Docker build instructions
+**Backend (root level):**
+- `railway.json` - Railway build configuration
+- `Dockerfile` - Docker build instructions (builds from root)
 - `src/TaskManagement.Api/.dockerignore` - Files to exclude from Docker build
 
 **Frontend:**
@@ -415,7 +415,7 @@ For production use, consider upgrading to a paid plan for:
 
 ---
 
-## �🐛 Troubleshooting
+## �� Troubleshooting
 
 ### Backend Issues
 
