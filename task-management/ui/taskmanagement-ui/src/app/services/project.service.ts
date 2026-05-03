@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Project {
   id: string;
@@ -22,7 +23,7 @@ export interface AddMemberRequest {
   providedIn: 'root'
 })
 export class ProjectService {
-  private readonly apiUrl = 'https://localhost:5001/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

@@ -28,10 +28,11 @@ public sealed class TaskRepository : ITaskRepository
 
     public async Task<IReadOnlyList<TaskItem>> GetByProjectAsync(Guid projectId, CancellationToken cancellationToken)
     {
-        return await _db.Tasks
+        var tasks = await _db.Tasks
             .Where(x => x.ProjectId == projectId)
-            .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
+        
+        return tasks.OrderByDescending(x => x.CreatedAt).ToList();
     }
 
     public async Task UpdateAsync(TaskItem task, CancellationToken cancellationToken)

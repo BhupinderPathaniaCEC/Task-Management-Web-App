@@ -130,4 +130,16 @@ export class ProjectsComponent implements OnInit {
   isAdmin(): boolean {
     return this.authService.userRole() === 'Admin';
   }
+
+  isOverdue(dueDate: string | null, status: number): boolean {
+    if (!dueDate || status === 2) return false;
+    const today = new Date().toISOString().split('T')[0];
+    return dueDate < today;
+  }
+
+  canUpdateTask(task: TaskItem): boolean {
+    if (this.isAdmin()) return true;
+    const currentUserId = this.authService.userId();
+    return task.assigneeUserId === currentUserId;
+  }
 }

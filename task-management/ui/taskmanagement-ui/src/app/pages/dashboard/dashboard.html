@@ -2,7 +2,7 @@
   <header class="header">
     <h1>Task Manager</h1>
     <div class="user-info">
-      <span class="role-badge">{{ userRole()() }}</span>
+      <span class="role-badge">{{ userRole() }}</span>
       <button class="btn-secondary" (click)="logout()">Logout</button>
     </div>
   </header>
@@ -35,6 +35,11 @@
         </div>
       </div>
 
+      <div class="quick-actions">
+        <a class="btn-primary" routerLink="/projects">+ Create Project</a>
+        <a class="btn-secondary" routerLink="/projects">+ Add Task</a>
+      </div>
+
       <div class="section">
         <h2>Recent Projects</h2>
         @if (projects().length === 0) {
@@ -65,7 +70,7 @@
                 </span>
                 <span class="title">{{ task.title }}</span>
                 @if (task.dueDate) {
-                  <span class="due" [class.overdue]="task.dueDate < (new Date().toISOString().split('T')[0]) && task.status !== 2">
+                  <span class="due" [class.overdue]="isOverdue(task.dueDate, task.status)">
                     Due: {{ task.dueDate | date:'shortDate' }}
                   </span>
                 }
