@@ -49,12 +49,8 @@ public sealed class TasksController : ControllerBase
 
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
-        // Use current user as assignee if none provided or invalid
-        var assigneeId = request.AssigneeUserId;
-        if (string.IsNullOrWhiteSpace(assigneeId) || assigneeId == "1")
-        {
-            assigneeId = currentUserId;
-        }
+        // Always use current user as assignee to prevent FK constraint failures
+        var assigneeId = currentUserId;
 
         var task = new TaskItem
         {

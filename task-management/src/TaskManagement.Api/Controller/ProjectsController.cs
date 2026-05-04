@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Api.Contracts.Projects;
 using TaskManagement.Application.Interface;
@@ -13,10 +14,12 @@ namespace TaskManagement.Api.Controller;
 public sealed class ProjectsController : ControllerBase
 {
     private readonly IProjectRepository _projectRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ProjectsController(IProjectRepository projectRepository)
+    public ProjectsController(IProjectRepository projectRepository, UserManager<ApplicationUser> userManager)
     {
         _projectRepository = projectRepository;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -68,7 +71,13 @@ public sealed class ProjectsController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(request.UserId))
         {
-            return BadRequest();
+            return BadRequest("UserId is required");
+        }
+
+        var user = await _userManager.FindByIdAsync(request.UserId);
+        if (user is null)
+        {
+            return BadRequest("User not found");
         }
 
         await _projectRepository.AddMemberAsync(projectId, request.UserId, cancellationToken);
